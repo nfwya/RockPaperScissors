@@ -21,7 +21,7 @@ const playRound = function(playerSelection, computerSelection){
     playerSelectionUpperCase = playerSelection.toUpperCase();
     console.log(playerSelectionUpperCase);
     if(playerSelectionUpperCase === computerSelection){
-        alert( `It's a draw, both chose ${playerSelectionUpperCase}`)
+        //alert( `It's a draw, both chose ${playerSelectionUpperCase}`)
         return 'draw';
     }
     else if(
@@ -29,18 +29,18 @@ const playRound = function(playerSelection, computerSelection){
         (playerSelectionUpperCase === PAPER && computerSelection === ROCK) ||
         (playerSelectionUpperCase === SCISSORS && computerSelection === PAPER)
     ){
-        alert(`You win! ${playerSelectionUpperCase} beats ${computerSelection} !`);
+        //alert(`You win! ${playerSelectionUpperCase} beats ${computerSelection} !`);
         return 'player';
     }
     else{
-        alert(`You lose! ${computerSelection} beats ${playerSelectionUpperCase} !`);
+        //alert(`You lose! ${computerSelection} beats ${playerSelectionUpperCase} !`);
         return 'computer';
     }
 }
+let computer_score = 0;
+let player_score = 0;
+const game = function(playerSelection){
 
-const game = function(){
-    let computer_score = 0;
-    let player_score = 0;
     const score = function(str){
         if(str === 'computer'){
             computer_score++;
@@ -49,20 +49,53 @@ const game = function(){
             player_score++;
         }
     }
-    for(let i = 0; i<5; i++){
-        console.log(`i=${i}}`);
-        const result = playRound( prompt("Please enter ROCK/PAPER/SCISSORS:"), computerPlay() );
-        console.log(result);
-        score(result);        
+    score( playRound(playerSelection,computerPlay()) );
+    drawScoreBoard();
+    if(computer_score === 5){
+        alert("Computer wins!");
+        removeClick();
     }
-    if( computer_score > player_score ){
-        alert(`You lose! Computer Score:${computer_score}, Your score:${player_score}`);
+    if(player_score === 5){
+        alert("Player wins!");
+        removeClick();
     }
-    else if ( player_score > computer_score ){
-        alert(`You win! Your score:${player_score}, Computer:score:${computer_score}`);
-    }
-    else{
-        alert(`It's a draw! Both scored: ${player_score}`)
-    }
+
 }
-game();
+
+/* Adding Event Listener*/
+const buttons = document.querySelectorAll("button");
+console.log(buttons);
+
+function select(){
+    game(this.textContent)
+}
+
+buttons.forEach(button => button.addEventListener('click',select));
+
+const removeClick = function(){
+    buttons.forEach(button => button.removeEventListener('click',select));
+}
+
+/* Score Board */
+const drawScoreBoard = function(){
+    const body = document.querySelector('body');
+    const oldBoard = document.querySelector('.board');
+    if(oldBoard){
+        body.removeChild(oldBoard);
+    }
+    console.log(body);
+    const scoreBoard = document.createElement('div');
+    scoreBoard.classList.add("board");
+
+    const playerScore = document.createElement('span');
+    playerScore.textContent = `Player Score: ${player_score}`;
+    playerScore.classList.add("score");
+    
+    const computerScore = document.createElement('span');
+    computerScore.textContent = `Computer Score: ${computer_score}`;
+    computerScore.classList.add("score");
+
+    scoreBoard.appendChild(playerScore);
+    scoreBoard.appendChild(computerScore);
+    body.appendChild(scoreBoard);
+}
